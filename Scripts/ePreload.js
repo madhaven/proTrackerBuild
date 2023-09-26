@@ -1,6 +1,8 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('comms', {
+    editProject: (id, projectName, callback, err) => {
+        ipcRenderer.invoke('projectEditChannel', id, projectName).then(callback, err) },
     newTask: (obj, callback, err) => {
         ipcRenderer.invoke('newTaskChannel', obj).then(callback, err) },
     toggleTask: (taskId, statusId, time, callback, err) => {
@@ -9,8 +11,6 @@ contextBridge.exposeInMainWorld('comms', {
         ipcRenderer.invoke('taskEditChannel', id, task).then(callback, err) },
     loadData: (callback, err) => {
         ipcRenderer.invoke('loadLogsRequest').then(callback, err) },
-    saveData: (callback, err) => {
-        ipcRenderer.invoke('saveDataRequest').then(callback, err) },
     exportData: (logTree, tasks, projects, logs, callback, err) => {
         ipcRenderer.invoke('exportDataRequest', logTree, tasks, projects, logs).then(callback, err) },
     registerListener: (channel, callback) => {

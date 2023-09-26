@@ -1,24 +1,31 @@
 const path = require('path')
-const { app, BrowserWindow, dialog } = require('electron')
-const { registerHandlers } = require('./handlers')
+const { app, BrowserWindow } = require('electron')
 const { State } = require('./Models/State')
 const { ConfigService } = require('./Services/ConfigService')
 const { DatabaseService } = require('./Services/DatabaseService')
+const { LogService } = require('./Services/LogService')
+const { FileService } = require('./Services/FileService')
+const { registerHandlers } = require('./handlers')
 
-const debugMode = process.argv.some(arg => arg.includes('--inspect'))
-const configService = ConfigService.getService(
-    debugMode ? { dbPath: 'proTracker.db' } : undefined
-)
-const dbService = DatabaseService.getService()
 var mainWindow
+const debugMode = process.argv.some(arg => arg.includes('--inspect'))
+    , userDataPath = debugMode ? '.' : path.join(app.getPath('appData'), 'proTracker')
+    , configFileName = debugMode ? 'appconfig.json' : path.join(userDataPath, 'appconfig.json')
+    , config = debugMode ? { dbPath: 'proTracker.db' } : { dbPath: path.join(userDataPath, 'proTracker.db') }
+    , logStream = FileService.openStream(path.join(userDataPath, 'proTracker.log'))
+
+// Services
+LogService.addStream(logStream)
+ConfigService.getService(config, configFileName)
+DatabaseService.getService()
 
 const initialState = () => {
     // loads the data and creates the state instance that is sent to the UI
+    console.debug('main: Loading UI State', state)
     var state = new State(
         menuVisible=true,
         dataProfile=''
     )
-    console.debug('main: Loading UI State', state)
     return state
 }
 
@@ -34,11 +41,11 @@ const createWindow = () => {
     })
     registerHandlers(win)
     win.removeMenu()
-    win.loadFile('./Screens/log.html')
+    win.loadFile('./Screens/index.html')
     win.webContents.on('did-finish-load', () => {
-        if (debugMode) win.webContents.openDevTools()
         state = initialState()
         mainWindow.webContents.send('updateUI', state)
+        if (debugMode) win.webContents.openDevTools()
     })
     win.once('ready-to-show', () => {
         win.show()
@@ -47,15 +54,26 @@ const createWindow = () => {
     return win
 }
 
-app.whenReady().then(() => {
-    mainWindow = createWindow()
+// App Lifecycle
+
+if (!app.requestSingleInstanceLock()) {
+    console.warn('Multiple proTracker instances blocked')
+    app.quit()
+} else app.whenReady().then(() => {
+    if (BrowserWindow.getAllWindows().length === 0)
+        mainWindow ??= createWindow()
+    
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0)
-            mainWindow = createWindow()
+            mainWindow ??= createWindow()
     })
+
+    app.on('second-instance', () => { console.error('Second instance was created') })
 })
 
 // quit the app when no windows are open on non-macOS platforms
 app.on('window-all-closed', () => {
+    console.logEnd()
+    FileService.closeAllStreams()
     if (process.platform !== 'darwin') app.quit()
 })

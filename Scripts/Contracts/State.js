@@ -11,7 +11,7 @@ const State = class {
         this.logs = {}
         this.tasks = {}
         this.projects = {}
-        this.logTree = {} // date > taskId > log
+        this.logTree = {} // date > projectId > taskId > log
         this.projectTree = {} // projectId > taskId > stateId
     }
 
@@ -49,8 +49,8 @@ const State = class {
     }
 
     addData (log, task, project) {
-        this.tasks[task.id] = this.tasks[task.id] ?? task
-        this.projects[project.id] = this.projects[project.id] ?? project
+        this.tasks[task.id] ??= task
+        this.projects[project.id] ??= project
         this.addLog(log)
         console.debug('data added', this)
     }
@@ -76,25 +76,27 @@ const State = class {
                 , year = t.getFullYear()
                 , month = t.getMonth()
                 , date = t.getDate()
-                , taskId = log.taskId
-                , projectId = this.tasks[taskId].projectId
-            this.logTree[[year, month, date]] = this.logTree[[year, month, date]] ?? {}
-            this.logTree[[year, month, date]][taskId] = log
+                , task = this.tasks[log.taskId]
+                , project = this.projects[task.projectId]
+            this.logTree[[year, month, date]] ??= {}
+            this.logTree[[year, month, date]][project.id] ??= {}
+            this.logTree[[year, month, date]][project.id][task.id] = log
             if (log.statusId == 1)
-                pendingLogs.set(taskId, log)
+                pendingLogs.set(task, log)
             else
-                pendingLogs.delete(taskId)
-
-            this.projectTree[projectId] = this.projectTree[projectId] ?? {}
-            this.projectTree[projectId][taskId] = log.statusId
+                pendingLogs.delete(task)
+    
+            this.projectTree[project.id] ??= {}
+            this.projectTree[project.id][task.id] = log.statusId
         }
 
         // show pending tasks on current date
         const t2 = new Date()
         const today = [t2.getFullYear(), t2.getMonth(), t2.getDate()]
-        for (const [taskId, log] of pendingLogs) {
-            this.logTree[today] = this.logTree[today] ?? {}
-            this.logTree[today][taskId] = log
+        for (const [task, log] of pendingLogs) {
+            this.logTree[today] ??= {}
+            this.logTree[today][task.projectId] ??= {}
+            this.logTree[today][task.projectId][task.id] = log
         }
     }
 }
