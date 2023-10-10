@@ -13,7 +13,7 @@ a simple way of tracking progress
   * Sqlite db having access  
   * electron and npm version mismatches  
 
-## Architecture
+## Architectur
 
 The [Electron framework](https://www.electronjs.org/) as I understand works with 3 components  
 
