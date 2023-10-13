@@ -25,11 +25,11 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: release
-          path: /out
+          path: ./out/make
       - name: Create Github Release
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
-          files: /out/*
+          files: ./out/make/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
