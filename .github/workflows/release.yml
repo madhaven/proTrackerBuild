@@ -17,6 +17,7 @@ jobs:
         run: npm ci
       - name: Build Electron App
         run: npm run make
+        working-directory: ./path/to/your/project
   release:
     runs-on: windows-latest
     needs: build
@@ -26,6 +27,8 @@ jobs:
         with:
           name: release
           path: ./out/make
+      - name: List Contents of Root Directory
+        run: ls -la
       - name: Read App Version
         id: version
         run: echo ::set-output name=app_version::$(node -e "console.log(require('./package.json').version)")
