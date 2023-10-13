@@ -28,7 +28,7 @@ jobs:
           name: release
           path: ./out/make
       - name: List Contents of Root Directory
-        run: ls -la
+        run: dir
       - name: Read App Version
         id: version
         run: echo ::set-output name=app_version::$(node -e "console.log(require('./package.json').version)")
