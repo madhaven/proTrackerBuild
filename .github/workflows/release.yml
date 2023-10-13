@@ -26,10 +26,16 @@ jobs:
         with:
           name: release
           path: ./out/make
-      - name: Create Github Release
+      - name: Read App Version
+        id: version
+        run: echo ::set-output name=app_version::$(node -e "console.log(require('./package.json').version)")
+      - name: Create GitHub Release
         id: create_release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: ./out/make/*
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.version.outputs.app_version }}
+          release_name: Release ${{ steps.version.outputs.app_version }}
+          draft: false
+          prerelease: false
