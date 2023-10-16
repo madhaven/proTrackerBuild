@@ -31,10 +31,9 @@ jobs:
         run: Get-ChildItem
       - name: Read App Version
         id: version
+        working-directory: D:/a/proTrackerBuild/proTrackerBuild
         run: |
-          cd D:/a/proTrackerBuild/proTrackerBuild
-          dir
-          echo ::set-output name=app_version::$(node -e "console.log(require('./package.json').version)")      
+          echo ::set-output name=app_version::$(node -e "console.log(require('./package.json').version)")
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
