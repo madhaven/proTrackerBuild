@@ -32,7 +32,7 @@ jobs:
       - name: Read App Version
         id: version
         run: |
-          cd $GITHUB_WORKSPACE  # Change the working directory to the root of your repository
+          cd D:/a/proTrackerBuild/proTrackerBuild
           dir
           echo ::set-output name=app_version::$(node -e "console.log(require('./package.json').version)")      
       - name: Create GitHub Release
