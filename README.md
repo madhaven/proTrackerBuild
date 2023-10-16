@@ -1,5 +1,4 @@
 # proTrackerBuild
----
 
 * Checkout [proTracker](https://www.github.com/madhaven/proTracker) for the project
 * This project is intended to test out build and release strategies.
