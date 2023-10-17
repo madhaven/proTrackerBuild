@@ -31,8 +31,8 @@ jobs:
         run: Get-ChildItem
       - name: Read App Version
         id: version
-        working-directory: D:/a/proTrackerBuild/proTrackerBuild
         run: |
+          cd ${{ github.workspace }}  # Change to the repository's root directory
           echo ::set-output name=app_version::$(node -e "console.log(require('./package.json').version)")
       - name: Create GitHub Release
         id: create_release
