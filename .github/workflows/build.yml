@@ -4,14 +4,18 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build_on_win:
-    runs-on: windows-latest
+  build_on_linux:
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-node@master
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
       with:
         node-version: 18
-    - name: install dependencies
+
+    - name: Install dependencies
       run: npm install
-    - name: build
+
+    - name: Build
       run: npm run make
