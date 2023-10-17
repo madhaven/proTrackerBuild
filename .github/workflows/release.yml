@@ -3,27 +3,23 @@ on:
   push:
     branches:
       - master
-
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
           node-version: 18
       - name: Install dependencies
         run: npm ci
-
       - name: Build Electron App
         run: npm run make
         working-directory: .
-
   release:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: build
     steps:
       - name: Upload release artifact
@@ -31,18 +27,13 @@ jobs:
         with:
           name: release
           path: ./out/make
-
-      - name: List Contents of GitHub Workspace
-        run: |
-          ls ${{ github.workspace }}
-
+      - name: List Contents of Root Directory
+        run: Get-ChildItem
       - name: Read App Version
         id: version
+        working-directory: D:/a/proTrackerBuild/proTrackerBuild
         run: |
-          package_json=$(<${{ github.workspace }}/package.json)
-          app_version=$(echo $package_json | jq -r '.version')
-          echo "::set-output name=app_version::$app_version"
-
+          echo ::set-output name=app_version::$(node -e "console.log(require('./package.json').version)")
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
