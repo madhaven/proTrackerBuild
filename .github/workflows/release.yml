@@ -27,13 +27,14 @@ jobs:
         with:
           name: release
           path: ./out/make
-      - name: List Contents of Root Directory
-        run: Get-ChildItem
+      - name: List Contents of GitHub Workspace
+        run: |
+          dir ${{ github.workspace }}
       - name: Read App Version
         id: version
         run: |
-          cd ${{ github.workspace }}  # Change to the repository's root directory
-          echo ::set-output name=app_version::$(node -e "console.log(require('./package.json').version)")
+          echo ::set-output name=app_version::$(node -e "console.log(require('${{ github.workspace }}/package.json').version)")
+      
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
