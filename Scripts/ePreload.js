@@ -1,18 +1,30 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('comms', {
-    editProject: (id, projectName, callback, err) => {
-        ipcRenderer.invoke('projectEditChannel', id, projectName).then(callback, err) },
-    newTask: (obj, callback, err) => {
-        ipcRenderer.invoke('newTaskChannel', obj).then(callback, err) },
-    toggleTask: (taskId, statusId, time, callback, err) => {
-        ipcRenderer.invoke('taskClickChannel', taskId, statusId, time).then(callback, err) },
-    editTask: (id, task, callback, err) => {
-        ipcRenderer.invoke('taskEditChannel', id, task).then(callback, err) },
-    loadData: (callback, err) => {
-        ipcRenderer.invoke('loadLogsRequest').then(callback, err) },
-    exportData: (logTree, tasks, projects, logs, callback, err) => {
-        ipcRenderer.invoke('exportDataRequest', logTree, tasks, projects, logs).then(callback, err) },
+    editProject: (project, callback, err) => {
+        return ipcRenderer.invoke('projectEditChannel', project); },
+    newTask: (task) => {
+        return ipcRenderer.invoke('newTaskChannel', task); },
+    toggleTask: (taskId, statusId, time) => {
+        return ipcRenderer.invoke('taskClickChannel', taskId, statusId, time); },
+    editTask: (task) => {
+        return ipcRenderer.invoke('taskEditChannel', task); },
+    newHabit: (habit) => {
+        return ipcRenderer.invoke('habitCreateChannel', habit); },
+    editHabit: (newHabit) => {
+        return ipcRenderer.invoke('habitEditChannel', newHabit); },
+    habitDone: (habitId, time) => {
+        return ipcRenderer.invoke('habitDoneChannel', habitId, time); },
+    deleteHabit: (habitId, time, callback, err) => {
+        ipcRenderer.invoke('deleteHabitChannel', habitId, time).then(callback, err) },
+    loadData: () => {
+        return ipcRenderer.invoke('loadDataRequest'); },
+    exportData: (logTree) => {
+        // passing the logTree could be network intensive
+        // calculating it on the backend could load the backend as well
+        // either way, processing need only be done on one end and the front end seems ideal
+        return ipcRenderer.invoke('exportDataRequest', logTree);
+    },
     registerListener: (channel, callback) => {
         ipcRenderer.on(channel, callback) },
 })

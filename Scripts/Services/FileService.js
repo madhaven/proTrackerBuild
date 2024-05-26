@@ -1,6 +1,7 @@
-const { dialog } = require("electron")
-const csv = require('fast-csv')
 const fs = require('fs')
+const csv = require('fast-csv')
+const { dialog } = require("electron")
+
 
 const FileService = class {
     static csv_options = [{ name: 'CSV Files', extensions: ['csv']}]
@@ -11,6 +12,12 @@ const FileService = class {
 
     static fileExists = filePath => {
         return fs.existsSync(filePath)
+    }
+
+    static readFile = (file, format) => {
+        if (!file) return false
+        format ??= 'utf8' // sus formal parameter
+        return fs.readFileSync(file, format)
     }
 
     static loadAFile = async win => { // deprecated
@@ -60,6 +67,20 @@ const FileService = class {
     static closeAllStreams = () => {
         this.streams.forEach(stream => stream.close())
         this.streams = []
+    }
+
+    static copyOrReplace = (fromPath, toPath) => {
+        if (!fromPath || !toPath) return false
+        fs.copyFileSync(fromPath, toPath)
+        return true
+    }
+
+    static getFilesInDir = (path) => {
+        if (!path) return []
+        try {
+            const filesInDir = fs.readdirSync(path)
+            return filesInDir
+        } catch { return [] }
     }
 }
 
