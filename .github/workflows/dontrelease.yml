@@ -1,8 +1,8 @@
 name: Release Electron App
-# on:
-#   push:
-#     branches:
-#       - master
+on:
+  push:
+    branches:
+      - master
 jobs:
   build:
     runs-on: windows-latest
