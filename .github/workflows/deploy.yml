@@ -27,7 +27,7 @@ jobs:
       - name: Deploy to GitHub Pages
         env:
           CI: true
-        run: npx angular-cli-ghpages --dir=dist/YOUR_PROJECT_NAME
+        run: npx angular-cli-ghpages --dir=dist/pUIng
         # Replace YOUR_PROJECT_NAME with the actual name of your project
 
       - name: Clean up repository
