@@ -28,7 +28,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: build-artifact
-        path: ./pUIng/dist/pUIng  # This should match the output directory of your Angular build
+        path: ./pUIng/dist/pUIng/*  # This should match the output directory of your Angular build
 
   deploy:
     needs: build
@@ -44,18 +44,31 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: build-artifact
-        path: ./pUIng/dist/pUIng  # Ensure this matches the path used in the build job
+        path: ./pUIng/dist/pUIng/*  # Ensure this matches the path used in the build job
 
+    # - name: Deploy to GitHub Pages
+    #   uses: actions/deploy-pages@v3
+    #   with:
+    #     branch: gh-pages  # Deploy to the gh-pages branch
+    #     folder: ./pUIng/dist/pUIng  # This is the directory to deploy
+
+    # - name: Deploy to GitHub Pages
+    #   run: |
+    #     git config --global user.name 'github-actions'
+    #     git config --global user.email 'github-actions@github.com'
+    #     git add .
+    #     git commit -m 'Deploy to GitHub Pages'
+    #     git push origin `gh-pages` --force
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
     - name: Deploy to GitHub Pages
-      run: |
-        git config --global user.name 'github-actions'
-        git config --global user.email 'github-actions@github.com'
-        git add .
-        git commit -m 'Deploy to GitHub Pages'
-        git push origin `gh-pages` --force
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+      id: deployment
+      uses: actions/deploy-pages@v3 # or specific "vX.X.X" version tag for this action
+    
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
 # name: Deploy to GitHub Pages
 
