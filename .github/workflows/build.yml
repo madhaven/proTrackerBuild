@@ -46,7 +46,7 @@ jobs:
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./pUIng/dist/  # This is the output directory of your build command
+        publish_dir: ./pUIng/dist  # This is the output directory of your build command
 
   # Single deploy job since we're just deploying
   # deploy:
