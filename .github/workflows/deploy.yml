@@ -3,101 +3,32 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - master  # Trigger the workflow on push to the master branch
+      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '21.7.1'  # Use the Node.js version required by your project
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm install
 
-    - name: Build the project
-      run: npm run build -- --prod  # Build the Angular project in production mode
+      - name: Build project
+        run: npm run build --prod
 
-    - name: Upload artifact for deployment
-      uses: actions/upload-artifact@v3
-      with:
-        name: build-artifact
-        path: ./pUIng/dist/pUIng/*  # This should match the output directory of your Angular build
+      - name: Deploy to GitHub Pages
+        env:
+          CI: true
+        run: npx angular-cli-ghpages --dir=dist/YOUR_PROJECT_NAME
+        # Replace YOUR_PROJECT_NAME with the actual name of your project
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write  # Allows deployment to GitHub Pages
-      id-token: write  # Required for GitHub Pages authentication
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Download artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: build-artifact
-        path: ./pUIng/dist/pUIng/*  # Ensure this matches the path used in the build job
-
-    # - name: Deploy to GitHub Pages
-    #   uses: actions/deploy-pages@v3
-    #   with:
-    #     branch: gh-pages  # Deploy to the gh-pages branch
-    #     folder: ./pUIng/dist/pUIng  # This is the directory to deploy
-
-    # - name: Deploy to GitHub Pages
-    #   run: |
-    #     git config --global user.name 'github-actions'
-    #     git config --global user.email 'github-actions@github.com'
-    #     git add .
-    #     git commit -m 'Deploy to GitHub Pages'
-    #     git push origin `gh-pages` --force
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v3 # or specific "vX.X.X" version tag for this action
-    
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-# name: Deploy to GitHub Pages
-
-# on:
-#   push:
-#     branches:
-#       - master  # Trigger the workflow on push to the master branch
-
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#     - name: Checkout code
-#       uses: actions/checkout@v3
-
-#     - name: Setup Node.js
-#       uses: actions/setup-node@v3
-#       with:
-#         node-version: '21.7.1'  # Use the Node.js version required by your project
-
-#     - name: Install dependencies
-#       run: npm install
-
-#     - name: Build the project
-#       run: npm run build -- --prod  # Build the Angular project in production mode
-
-#     - name: Deploy to GitHub Pages
-#       uses: peaceiris/actions-gh-pages@v3
-#       with:
-#         github_token: ${{ secrets.GITHUB_TOKEN }}
-#         publish_dir: ./pUIng/dist/pUIng  # This is the output directory of your build command
+      - name: Clean up repository
+        run: git clean -fdx
