@@ -28,7 +28,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: build-artifact
-        path: ./dist/pUIng  # This should match the output directory of your Angular build
+        path: ./dist/pUIng/*  # This should match the output directory of your Angular build
 
   deploy:
     needs: build
@@ -44,7 +44,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: build-artifact
-        path: ./dist/pUIng  # Ensure this matches the path used in the build job
+        path: ./dist/pUIng/*  # Ensure this matches the path used in the build job
 
     - name: Deploy to GitHub Pages
       uses: actions/deploy-pages@v1
