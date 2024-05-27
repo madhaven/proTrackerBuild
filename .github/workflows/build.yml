@@ -43,10 +43,11 @@ jobs:
       run: ls .
 
     - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./pUIng/dist  # This is the output directory of your build command
+      id: pages
+      uses: actions/deploy-pages@v1
+        # with:
+        #   github_token: ${{ secrets.GITHUB_TOKEN }}
+        #   publish_dir: ./pUIng/dist  # This is the output directory of your build command
 
   # Single deploy job since we're just deploying
   # deploy:
