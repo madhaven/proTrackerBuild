@@ -25,10 +25,11 @@ jobs:
         run: npm run build --prod
 
       - name: Deploy to GitHub Pages
-        env:
-          CI: true
-        run: npx angular-cli-ghpages --dir=dist/pUIng
-        # Replace YOUR_PROJECT_NAME with the actual name of your project
+        # env:
+        #   CI: true
+        # run: npx angular-cli-ghpages --dir=dist/pUIng
+        # # Replace YOUR_PROJECT_NAME with the actual name of your project
+        run: ng deploy
 
       - name: Clean up repository
         run: git clean -fdx
