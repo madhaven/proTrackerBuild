@@ -29,7 +29,7 @@ jobs:
         #   CI: true
         # run: npx angular-cli-ghpages --dir=dist/pUIng
         # # Replace YOUR_PROJECT_NAME with the actual name of your project
-        run: ng deploy
+        run: cd pUIng && ng deploy
 
       - name: Clean up repository
         run: git clean -fdx
